@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var observable : Observable<String>
     lateinit var disposableObserver: DisposableObserver<String>
     lateinit var disposableObserver2: DisposableObserver<String>
-    lateinit var compositeDisposable = CompositeDisposable()
+    var compositeDisposable = CompositeDisposable()
 
     //lateinit var disposable: Disposable
 
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
 
-        /*        observer = object : Observer<String>{
+        /* observer = object : Observer<String>{
             override fun onSubscribe(d: Disposable) {
                 disposable = d
             }
