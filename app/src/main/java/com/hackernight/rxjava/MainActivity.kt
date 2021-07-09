@@ -6,15 +6,20 @@ import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity() {
 
     val TAG = "my_app"
     lateinit var observable : Observable<String>
-    lateinit var observer: Observer<String>
-    lateinit var disposable: Disposable
+    lateinit var disposableObserver: DisposableObserver<String>
+    lateinit var disposableObserver2: DisposableObserver<String>
+    lateinit var compositeDisposable = CompositeDisposable()
+
+    //lateinit var disposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +28,8 @@ class MainActivity : AppCompatActivity() {
         observable = Observable.just("Amit Kumar")
         observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
-        observer = object : Observer<String>{
+
+        /*        observer = object : Observer<String>{
             override fun onSubscribe(d: Disposable) {
                 disposable = d
             }
@@ -33,20 +39,52 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onError(e: Throwable) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onComplete() {
                 Log.d(TAG,"On Complete")            }
 
+        }*/
+
+
+        disposableObserver = object : DisposableObserver<String>() {
+            override fun onNext(t: String) {
+                Log.d(TAG,"On Next $t")
+            }
+            override fun onError(e: Throwable) {
+                TODO("Not yet implemented")
+            }
+            override fun onComplete() {
+                TODO("Not yet implemented")
+            }
         }
 
-        observable.subscribe(observer)
+        compositeDisposable.add(disposableObserver)
+        observable.subscribe(disposableObserver)
+
+
+        disposableObserver2 = object :DisposableObserver<String>(){
+            override fun onNext(t: String) {
+                Log.d(TAG,"On Next $t")
+            }
+            override fun onError(e: Throwable) {
+                TODO("Not yet implemented")
+            }
+            override fun onComplete() {
+                TODO("Not yet implemented")
+            }
+        }
+
+        compositeDisposable.add(disposableObserver2)
+        observable.subscribe(disposableObserver2)
 
     }
 
     override fun onDestroy() {
-        disposable.dispose()
+        compositeDisposable.clear()
+        /*disposableObserver.dispose()
+        disposableObserver2.dispose()*/
         super.onDestroy()
     }
 
