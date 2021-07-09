@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     val TAG = "my_app"
     lateinit var observable : Observable<String>
     lateinit var observer: Observer<String>
+    lateinit var disposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         observer = object : Observer<String>{
             override fun onSubscribe(d: Disposable) {
-                TODO("Not yet implemented")
+                disposable = d
             }
 
             override fun onNext(t: String) {
@@ -42,6 +43,11 @@ class MainActivity : AppCompatActivity() {
 
         observable.subscribe(observer)
 
+    }
+
+    override fun onDestroy() {
+        disposable.dispose()
+        super.onDestroy()
     }
 
 }
